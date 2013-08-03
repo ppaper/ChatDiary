@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ti:app xmlns:ti="http://ti.appcelerator.org">
+    <property name="acs-oauth-secret-production" type="string">f8OMkGVIlH6BtP6JsMLR7TySorHMo3yN</property>
+    <property name="acs-oauth-key-production" type="string">sdWWuE1MdClBmAnhLXAoUrdlQXlJ9XtJ</property>
+    <property name="acs-api-key-production" type="string">9lllQzJlp9NakbORInMuLcM2Z9yrl7Xx</property>
+    <property name="acs-oauth-secret-development" type="string">Sgc3NO9Pbh6c4oUKKHsteqKxMVlVo294</property>
+    <property name="acs-oauth-key-development" type="string">J91mU5Wm1A06MErTTowMgif5SjtUCRJw</property>
+    <property name="acs-api-key-development" type="string">BY7nQjr24mE3ogzSHqOUekIu4CmA831M</property>
+    <id>studio.paperworks.chatdiary</id>
+    <name>ChatDiary</name>
+    <version>1.0</version>
+    <publisher>paperli</publisher>
+    <url>http://paperli.github.io/</url>
+    <description>not specified</description>
+    <copyright>2013 by paperli</copyright>
+    <icon>appicon.png</icon>
+    <persistent-wifi>false</persistent-wifi>
+    <prerendered-icon>false</prerendered-icon>
+    <statusbar-style>default</statusbar-style>
+    <statusbar-hidden>false</statusbar-hidden>
+    <fullscreen>false</fullscreen>
+    <navbar-hidden>false</navbar-hidden>
+    <analytics>true</analytics>
+    <guid>1d8231f5-1d39-4a50-a0b4-7d96b398c458</guid>
+    <property name="ti.ui.defaultunit" type="string">system</property>
+    <iphone>
+        <orientations device="iphone">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+        </orientations>
+        <orientations device="ipad">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
+        </orientations>
+    </iphone>
+    <android xmlns:android="http://schemas.android.com/apk/res/android"/>
+    <mobileweb>
+        <precache/>
+        <splash>
+            <enabled>true</enabled>
+            <inline-css-images>true</inline-css-images>
+        </splash>
+        <theme>default</theme>
+    </mobileweb>
+    <modules>
+        <module platform="commonjs">ti.cloud</module>
+    </modules>
+    <deployment-targets>
+        <target device="android">false</target>
+        <target device="blackberry">false</target>
+        <target device="ipad">true</target>
+        <target device="iphone">true</target>
+        <target device="mobileweb">true</target>
+        <target device="tizen">false</target>
+    </deployment-targets>
+    <sdk-version>3.1.1.GA</sdk-version>
+</ti:app>
