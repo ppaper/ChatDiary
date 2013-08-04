@@ -35,13 +35,20 @@ function ChatRoom(data) {
 		height:Ti.UI.FILL
 	});
 	
+	var talks = Ti.UI.createTableView({
+		top:0,
+		bottom:44
+	});
+	
+	wholeView.add(talks);
+	
 	var sayRefRect;
 	
 	//display on bottom of view
-	var sayPanel = Ti.UI.iOS.createToolbar({
-		barColor:'rgb(230,230,230)',
+	var sayPanel = Ti.UI.createView({
 		bottom:0,
-		height:'auto'
+		height:44,
+		backgroundColor:'rgb(230,230,230)'
 	});
 	
 	var buttonSend = Ti.UI.createButton({
@@ -49,7 +56,8 @@ function ChatRoom(data) {
 		font:{fontSize:12},
 		height:30,
 		right:10,
-		width:44
+		width:44,
+		botton:7
 	});
 	
 	var say = Ti.UI.createTextArea({
@@ -57,6 +65,7 @@ function ChatRoom(data) {
 		hintText:'say something...',
 		left:10,
 		right:60,
+		bottom:4,
 		width:250,
 		color:'#333',
 		font:{fontSize:16},
@@ -70,19 +79,22 @@ function ChatRoom(data) {
 		font:{fontSize:16},
 		height:Ti.UI.SIZE,
 		visible:false,
-		text:say.value
+		text:"hi there"
 	});
 	
 	say.addEventListener('change',function(e){
+		console.log("height diff is "+(sayRef.rect.height-say.rect.height));
 		sayRef.text = say.value;
 		console.log("text is "+e.source.vale+"::"+e.source+"::"+e);
 		console.log("1height become "+sayRef.size.height);
 		console.log("2height become "+sayRef.rect.height);
 		console.log("3height become "+sayRef.height);
-		console.log("4height become "+sayRefRect.height);
-		say.height = sayRef.size.height;
-		sayPanel.height = sayRef.size.height;
-		//console.log("saypanel height is "+sayPanel.height);
+		
+		//diff between TextArea and Label is 16
+		say.height = sayRef.size.height+16;
+		sayPanel.height = sayRef.size.height+24;
+		talks.bottom = sayPanel.height;
+		console.log("saypanel height is "+sayPanel.height);
 	});
 	
 	sayPanel.add(sayRef);
@@ -126,12 +138,7 @@ function ChatRoom(data) {
 	//console.log("h1:"+supervisorPanel.getHeight());
 	//console.log("h2:"+sayPanel.getHeight());
 	
-	var talks = Ti.UI.createTableView({
-		top:0,
-		bottom:44
-	});
 	
-	wholeView.add(talks);
 	
 	wholeView.add(supervisorPanel);
 	
