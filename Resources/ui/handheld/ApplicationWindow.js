@@ -1,10 +1,21 @@
 function ApplicationWindow(title) {
-	var self = Ti.UI.createWindow({
+	var subWindow;
+	if (title == 'SAY'){
+		//SAY window
+		subWindow = require('ui/handheld/SayWindow');
+	} else {
+		//DAY window
+		subWindow = require('ui/handheld/DayWindow');
+	}
+	
+	var self = new subWindow(title);
+	return self;
+	/*var self = Ti.UI.createWindow({
 		title:title,
 		backgroundColor:'white'
 	});
 	
-	var button = Ti.UI.createButton({
+	/*var button = Ti.UI.createButton({
 		height:44,
 		width:200,
 		title:L('openWindow'),
@@ -21,7 +32,7 @@ function ApplicationWindow(title) {
 		}));
 	});
 	
-	return self;
+	return self;*/
 };
 
 module.exports = ApplicationWindow;

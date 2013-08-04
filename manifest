@@ -1,9 +1,9 @@
-#appname: ChatDiary
-#appid: studio.paperworks.chatdiary
-#type: mobile
-#guid: 1d8231f5-1d39-4a50-a0b4-7d96b398c458
-#version: 1.0
-#publisher: not specified
-#url: not specified
-#image: appicon.png
-#desc: not specified
+#appname:ChatDiary
+#appid:studio.paperworks.chatdiary
+#type:mobile
+#guid:1d8231f5-1d39-4a50-a0b4-7d96b398c458
+#version:1.0
+#publisher:paperli
+#url:http://paperli.github.io/
+#image:appicon.png
+#desc:not specified

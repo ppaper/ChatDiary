@@ -16,7 +16,7 @@
     <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
-    <statusbar-style>default</statusbar-style>
+    <statusbar-style>translucent_black</statusbar-style>
     <statusbar-hidden>false</statusbar-hidden>
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>
@@ -47,9 +47,9 @@
         <module platform="commonjs">ti.cloud</module>
     </modules>
     <deployment-targets>
-        <target device="android">false</target>
+        <target device="android">true</target>
         <target device="blackberry">false</target>
-        <target device="ipad">true</target>
+        <target device="ipad">false</target>
         <target device="iphone">true</target>
         <target device="mobileweb">true</target>
         <target device="tizen">false</target>

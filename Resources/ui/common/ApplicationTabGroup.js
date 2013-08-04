@@ -1,24 +1,24 @@
 function ApplicationTabGroup(Window) {
 	//create module instance
-	var self = Ti.UI.createTabGroup();
+	var self = Ti.UI.createTabGroup({});
 	
 	//create app tabs
-	var win1 = new Window(L('home')),
-		win2 = new Window(L('settings'));
+	var sayWin = new Window(L('SAY')),
+		dayWin = new Window(L('DAY'));
 	
 	var tab1 = Ti.UI.createTab({
-		title: L('home'),
+		title: L('SAY'),
 		icon: '/images/KS_nav_ui.png',
-		window: win1
+		window: sayWin
 	});
-	win1.containingTab = tab1;
+	sayWin.containingTab = tab1;
 	
 	var tab2 = Ti.UI.createTab({
-		title: L('settings'),
+		title: L('DAY'),
 		icon: '/images/KS_nav_views.png',
-		window: win2
+		window: dayWin
 	});
-	win2.containingTab = tab2;
+	dayWin.containingTab = tab2;
 	
 	self.addTab(tab1);
 	self.addTab(tab2);
