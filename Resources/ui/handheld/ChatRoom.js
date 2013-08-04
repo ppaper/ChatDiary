@@ -35,6 +35,8 @@ function ChatRoom(data) {
 		height:Ti.UI.FILL
 	});
 	
+	var sayRefRect;
+	
 	//display on bottom of view
 	var sayPanel = Ti.UI.iOS.createToolbar({
 		barColor:'rgb(230,230,230)',
@@ -50,16 +52,16 @@ function ChatRoom(data) {
 		width:44
 	});
 	
-	var say = Ti.UI.createTextField({
-		borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+	var say = Ti.UI.createTextArea({
+		//borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
 		hintText:'say something...',
 		left:10,
 		right:60,
 		width:250,
-		bottom:7,
 		color:'#333',
 		font:{fontSize:16},
-		height:Ti.UI.SIZE
+		height:Ti.UI.SIZE,
+		scrollable:false
 	});
 	
 	var sayRef = Ti.UI.createLabel({
@@ -72,9 +74,14 @@ function ChatRoom(data) {
 	});
 	
 	say.addEventListener('change',function(e){
-		sayRef.text = e.vale;
-		say.height = sayRef.height;
-		sayPanel.height = sayRef.height;
+		sayRef.text = say.value;
+		console.log("text is "+e.source.vale+"::"+e.source+"::"+e);
+		console.log("1height become "+sayRef.size.height);
+		console.log("2height become "+sayRef.rect.height);
+		console.log("3height become "+sayRef.height);
+		console.log("4height become "+sayRefRect.height);
+		say.height = sayRef.size.height;
+		sayPanel.height = sayRef.size.height;
 		//console.log("saypanel height is "+sayPanel.height);
 	});
 	
@@ -84,9 +91,10 @@ function ChatRoom(data) {
 	
 	wholeView.add(sayPanel);
 	
-	
-	
-	
+	sayRef.addEventListener('postlayout',function(e){
+		sayRefRect = sayRef.rect;
+		//console.log("height is "+sayRefRect.height);
+	});
 	
 	var supervisorPanel = Ti.UI.iOS.createToolbar({
 		barColor:'#ffffff',
