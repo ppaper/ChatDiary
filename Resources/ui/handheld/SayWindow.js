@@ -1,19 +1,24 @@
 function SayWindow(title) {
-	var titleView = Ti.UI.createLabel({
+	/*var titleView = Ti.UI.createLabel({
 		text:title,
-		color:'#333333',
+		color:'#ffffff',
 		font:{fontSize:24},
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		shadowColor:'#fff',
-		shadowOffset:{x:0,y:1}
-	});
+		shadowColor:'#333',
+		shadowOffset:{x:0,y:-1}
+	});*/
 	
+	var titleView = Ti.UI.createImageView({
+		image:'images/icon_logo@2x.png',
+		width:Ti.UI.SIZE,
+		height:Ti.UI.SIZE
+	});
 	
 	var self = Ti.UI.createWindow({
 		titleControl:titleView,
 		backgroundColor:'white',
-		barColor:'rgb(230,230,230)'
+		barColor:'#3b5998'
 	});
 	
 	var chatrooms = [
