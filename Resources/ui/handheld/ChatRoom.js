@@ -98,6 +98,8 @@ function ChatRoom(data) {
 		console.log("saypanel height is "+sayPanel.height);
 	});
 	
+	
+	
 	sayPanel.add(sayRef);
 	sayPanel.add(say);
 	sayPanel.add(buttonSend);
@@ -110,7 +112,7 @@ function ChatRoom(data) {
 	});
 	
 	var supervisorPanel = Ti.UI.iOS.createToolbar({
-		barColor:'#ffffff',
+		barColor:'#50ffffff',
 		top:0,
 		borderBottom:true
 	});
@@ -140,8 +142,11 @@ function ChatRoom(data) {
 	//console.log("h2:"+sayPanel.getHeight());
 	
 	//---- chat history -----
-	var talks_data = ["Hi there!","How's going, buddy?","I'm having a similar problem. I assumed the argument was a float to account for half pixels, but I'm not really sure. It's not clear to me that any adjustment to the caps is doing anything currently.","What did you eat today?",
-	"Hi there!","How's going, buddy?","I'm having a similar problem. I assumed the argument was a float to account for half pixels, but I'm not really sure. It's not clear to me that any adjustment to the caps is doing anything currently.","What did you eat today?"];
+	var talks_data = [{fromMe:false,content:"Hi there!"},{fromMe:false,content:"How's going, buddy?"},{fromMe:false,content:"I'm having a similar problem. I assumed the argument was a float to account for half pixels, but I'm not really sure. It's not clear to me that any adjustment to the caps is doing anything currently."}
+	,{fromMe:true,content:"What did you eat today?"}
+	,{fromMe:false,content:"Hi there!"},{fromMe:false,content:"How's going, buddy?"},{fromMe:true,content:"I'm having a similar problem. I assumed the argument was a float to account for half pixels, but I'm not really sure. It's not clear to me that any adjustment to the caps is doing anything currently."}
+	,{fromMe:false,content:"What did you eat today?"}
+	];
 	
 	var talks_rows = [];
 	
@@ -149,7 +154,8 @@ function ChatRoom(data) {
 		top:0,
 		bottom:44,
 		separatorStyle:Ti.UI.iPhone.TableViewSeparatorStyle.NONE,
-		backgroundColor:'#f2f2f2'
+		backgroundColor:'#f2f2f2',
+		allowsSelection:false
 	});
 	
 	var row;
@@ -165,46 +171,79 @@ function ChatRoom(data) {
 		
 		//TopCap and LeftCap only work in TextField and button
 		
-		talk_bubble = Ti.UI.createTextField({
-			width:242,
-			height:Ti.UI.SIZE,
-			backgroundImage:'images/talk_bubble@2x.png',
-			backgroundLeftCap:30,
-			backgroundTopCap:40,
-			backgroundColor:'transparent',
-			top:6,
-			bottom:6,
-			paddingLeft:26,
-			paddingRight:6,
-			editable:false
-		});
-		
-		msg = Ti.UI.createTextArea({
-			width:210,
-			height:'auto',
-			value:element,
-			font:{fontSize:14},
-			color:'#666666',
-			backgroundColor:'transparent',
-			top:6,
-			bottom:6,
-			left:20,
-			right:6,
-			verticalAlign:Ti.UI.TEXT_VERTICAL_ALIGNMENT_TOP,
-			editable:false
-		});
-		
-
+		if (element.fromMe){
+			//my msg
+			talk_bubble = assambleMyMsg(element.content);
+			/*talk_bubble = Ti.UI.createTextField({
+				width:242,
+				height:Ti.UI.SIZE,
+				backgroundImage:'images/talk_bubble_me@2x.png',
+				backgroundLeftCap:30,
+				backgroundTopCap:40,
+				backgroundColor:'transparent',
+				top:6,
+				bottom:6,
+				paddingLeft:6,
+				paddingRight:26,
+				editable:false
+			});
+			
+			msg = Ti.UI.createTextArea({
+				width:210,
+				height:'auto',
+				value:element.content,
+				font:{fontSize:14},
+				color:'#666666',
+				backgroundColor:'transparent',
+				top:6,
+				bottom:6,
+				left:6,
+				right:20,
+				verticalAlign:Ti.UI.TEXT_VERTICAL_ALIGNMENT_TOP,
+				editable:false
+			});*/
+		}else{
+			//others msg
+			talk_bubble = assambleYourMsg(element.content);
+			/*talk_bubble = Ti.UI.createTextField({
+				width:242,
+				height:Ti.UI.SIZE,
+				backgroundImage:'images/talk_bubble@2x.png',
+				backgroundLeftCap:30,
+				backgroundTopCap:40,
+				backgroundColor:'transparent',
+				top:6,
+				bottom:6,
+				paddingLeft:26,
+				paddingRight:6,
+				editable:false
+			});
+			
+			msg = Ti.UI.createTextArea({
+				width:210,
+				height:'auto',
+				value:element.content,
+				font:{fontSize:14},
+				color:'#666666',
+				backgroundColor:'transparent',
+				top:6,
+				bottom:6,
+				left:20,
+				right:6,
+				verticalAlign:Ti.UI.TEXT_VERTICAL_ALIGNMENT_TOP,
+				editable:false
+			});*/
+		}
 		
 		/*if (msg.rect.height < MSG_MINI_HEIGHT){
 			msg.height = MSG_MINI_HEIGHT;
 		}*/
 		
-		talk_bubble.add(msg);
+		//talk_bubble.add(msg);
 		
 		row.add(talk_bubble);
 		
-		console.log("h is "+msg.height);
+		//console.log("h is "+msg.height);
 		
 		//talk_bubble.height = msg.rect.height + 12;
 		
@@ -238,6 +277,33 @@ function ChatRoom(data) {
 	wholeView.add(talks);
 	// ------ end of chat history -----
 	
+	//send out msg
+	say.addEventListener('return',function(e){
+		console.log(e.source+"::"+e.type+"::"+e.value);
+		if (e.value != ""||e.value != undefined){
+			//assamble msg
+			talks_data.unshift({fromMe:true, content:e.value});
+			//append chat row
+			var talk_bubble = assambleMyMsg(e.value);
+			var row = Ti.UI.createTableViewRow();
+			row.add(talk_bubble);
+			talks_rows.unshift(row);
+			talks.appendRow(row,{
+				animated:Ti.UI.ANIMATION_CURVE_EASE_IN,
+				animationStyle:Ti.UI.iPhone.RowAnimationStyle.FADE,
+				position:Ti.UI.iPhone.TableViewScrollPosition.BOTTOM
+			});
+			talks.scrollToIndex(talks_rows.length-1,{
+				animated:Ti.UI.ANIMATION_CURVE_EASE_IN,
+				position:Ti.UI.iPhone.TableViewScrollPosition.BOTTOM
+			});
+			
+			//clean typed in msg
+			say.value = '';
+			sayRef.text = '';
+		}
+	});
+	
 	
 	wholeView.add(supervisorPanel);
 	
@@ -247,5 +313,72 @@ function ChatRoom(data) {
 	
 	return self;
 };
+
+function assambleYourMsg(content){
+	var talk_bubble = Ti.UI.createTextField({
+				width:242,
+				height:Ti.UI.SIZE,
+				backgroundImage:'images/talk_bubble@2x.png',
+				backgroundLeftCap:30,
+				backgroundTopCap:40,
+				backgroundColor:'transparent',
+				top:6,
+				bottom:6,
+				paddingLeft:26,
+				paddingRight:6,
+				editable:false
+			});
+			
+	var msg = Ti.UI.createTextArea({
+				width:210,
+				height:'auto',
+				value:content,
+				font:{fontSize:14},
+				color:'#666666',
+				backgroundColor:'transparent',
+				top:6,
+				bottom:6,
+				left:20,
+				right:6,
+				verticalAlign:Ti.UI.TEXT_VERTICAL_ALIGNMENT_TOP,
+				editable:false
+			});
+			
+	talk_bubble.add(msg);
+	return talk_bubble;
+}
+
+function assambleMyMsg(content){
+	var talk_bubble = Ti.UI.createTextField({
+				width:242,
+				height:Ti.UI.SIZE,
+				backgroundImage:'images/talk_bubble_me@2x.png',
+				backgroundLeftCap:30,
+				backgroundTopCap:40,
+				backgroundColor:'transparent',
+				top:6,
+				bottom:6,
+				paddingLeft:6,
+				paddingRight:26,
+				editable:false
+			});
+			
+	var msg = Ti.UI.createTextArea({
+				width:210,
+				height:'auto',
+				value:content,
+				font:{fontSize:14},
+				color:'#666666',
+				backgroundColor:'transparent',
+				top:6,
+				bottom:6,
+				left:6,
+				right:20,
+				verticalAlign:Ti.UI.TEXT_VERTICAL_ALIGNMENT_TOP,
+				editable:false
+			});
+	talk_bubble.add(msg);
+	return talk_bubble;
+}
 
 module.exports = ChatRoom;
