@@ -31,6 +31,15 @@ if (Ti.version < 1.8 ) {
 	var isTablet = osname === 'ipad' || (osname === 'android' && (width > 899 || height > 899));
 	
 	var Window;
+	
+	//create database when the app launch (or open it if exist)
+	var db = Ti.Database.open('diaryQA');
+	//max. 8 questions
+	db.execute('CREATE TABLE IF NOT EXISTS chats (supervisor, date, q1, a1, q2, a2, q3, a3, q4, a4, q5, a5, q6, a6, q7, a7, q8, a8)');
+	//config
+	db.execute('CREATE TABLE IF NOT EXISTS config (s_mon, s_tue, s_wed, s_thu, s_fri, s_sat, s_sun)');
+	db.close();
+	
 	if (isTablet) {
 		Window = require('ui/tablet/ApplicationWindow');
 	}
