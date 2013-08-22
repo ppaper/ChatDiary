@@ -32,12 +32,75 @@ if (Ti.version < 1.8 ) {
 	
 	var Window;
 	
-	//create database when the app launch (or open it if exist)
 	var db = Ti.Database.open('diaryQA');
-	//max. 8 questions
-	db.execute('CREATE TABLE IF NOT EXISTS chats (supervisor, date, q1, a1, q2, a2, q3, a3, q4, a4, q5, a5, q6, a6, q7, a7, q8, a8)');
-	//config
-	db.execute('CREATE TABLE IF NOT EXISTS config (s_mon, s_tue, s_wed, s_thu, s_fri, s_sat, s_sun)');
+	
+	if (Ti.App.Properties.getString('first_run') == null){
+		Ti.API.info("first time launch app!!");
+		//init code
+		//create database when the app launch (or open it if exist)
+		
+		//max. 8 questions TODO: make flexibile
+		db.execute('CREATE TABLE IF NOT EXISTS chats (id INTEGER PRIMARY KEY,supervisor, date, q1, a1, q2, a2, q3, a3, q4, a4, q5, a5, q6, a6, q7, a7, q8, a8)');
+		//config
+		db.execute('CREATE TABLE IF NOT EXISTS configs (id INTEGER PRIMARY KEY, alert_time,supervisor,q1,q2,q3,q4,q5,q6,q7,q8)');
+		//insert default settings (FROM SUN. 1 to SAT. 7)
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("23:33",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("22:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("22:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("22:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("23:33",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("23:33",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("22:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		//friends
+		db.execute('CREATE TABLE IF NOT EXISTS friends (id INTEGER PRIMARY KEY,name,source)');
+		db.execute('INSERT INTO friends (id,name,source) VALUES (1,"David Chang","manule")');
+		db.execute('INSERT INTO friends (id,name,source) VALUES (2,"Agora Chen","manule")');
+		db.execute('INSERT INTO friends (id,name,source) VALUES (3,"Queen","manule")');
+		
+		
+		
+		Ti.App.Properties.setString('first_run',0);
+	}
+	
+	//TODO: if over time
+	var today = new Date();
+	
+	var rows = db.execute('SELECT * FROM configs WHERE id='+(today.getDay()+1));
+	Ti.API.info("Today is "+today.getDay()+". Result has "+rows.rowCount+" rows. Revoke time is "+rows.fieldByName("alert_time")+". Id is "+rows.fieldByName("id"));
+	var revokeTimeArray = rows.fieldByName("alert_time").split(":");
+	var revokeTime = new Date();
+	revokeTime.setHours(parseInt(revokeTimeArray[0]));
+	revokeTime.setMinutes(parseInt(revokeTimeArray[1]));
+	revokeTime.setSeconds(0);
+	console.log(revokeTime.toDateString()+" "+revokeTime.toTimeString());
+	
+	var supervisor = db.execute('SELECT id,name FROM friends WHERE id='+rows.fieldByName("supervisor"));
+	
+	var msg = rows.fieldByName('supervisor')+": "+rows.fieldByName("q1");
+	
+	var timeToWrite = Ti.App.iOS.scheduleLocalNotification({
+		date:revokeTime,
+		alertBody:msg,
+		repeat:'daily',
+		userInfo:{supervisor:rows.fieldByName('supervisor'),
+					q1:rows.fieldByName('q1'),
+					date:revokeTime}
+	});
+	
+	//TODO:Insert into database chat_history
+	//TODO:background service (what will happen when app is paused)
+	Ti.App.iOS.addEventListener('notification',function(data){
+		console.log(data.userInfo['date']);
+		console.log(data.userInfo['q1']);
+		console.log(data.userInfo['supervisor']);
+	});
+	
+	/*var revokeTime = new Date();
+	
+	var timeToWrite = Ti.App.iOS.scheduleLocalNotification({
+		date:new Date
+	});*/
+	
 	db.close();
 	
 	if (isTablet) {
