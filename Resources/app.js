@@ -44,8 +44,8 @@ if (Ti.version < 1.8 ) {
 		//config
 		db.execute('CREATE TABLE IF NOT EXISTS configs (id INTEGER PRIMARY KEY, alert_time,supervisor,q1,q2,q3,q4,q5,q6,q7,q8)');
 		//insert default settings (FROM SUN. 1 to SAT. 7)
-		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("23:33",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
-		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("22:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("13:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
+		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("13:32",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
 		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("22:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
 		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("22:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
 		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("23:33",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
@@ -62,6 +62,7 @@ if (Ti.version < 1.8 ) {
 		Ti.App.Properties.setString('first_run',0);
 	}
 	
+	Ti.App.iOS.setBubbleParent(true);
 	//TODO: if over time
 	var today = new Date();
 	
@@ -69,14 +70,15 @@ if (Ti.version < 1.8 ) {
 	Ti.API.info("Today is "+today.getDay()+". Result has "+rows.rowCount+" rows. Revoke time is "+rows.fieldByName("alert_time")+". Id is "+rows.fieldByName("id"));
 	var revokeTimeArray = rows.fieldByName("alert_time").split(":");
 	var revokeTime = new Date();
-	revokeTime.setHours(parseInt(revokeTimeArray[0]));
-	revokeTime.setMinutes(parseInt(revokeTimeArray[1]));
-	revokeTime.setSeconds(0);
+	//revokeTime.setHours(parseInt(revokeTimeArray[0]));
+	//revokeTime.setMinutes(parseInt(revokeTimeArray[1]));
+	revokeTime.setMinutes(59);
+	//revokeTime.setSeconds(0);
 	console.log(revokeTime.toDateString()+" "+revokeTime.toTimeString());
 	
 	var supervisor = db.execute('SELECT id,name FROM friends WHERE id='+rows.fieldByName("supervisor"));
 	
-	var msg = rows.fieldByName('supervisor')+": "+rows.fieldByName("q1");
+	var msg = supervisor.fieldByName("name")+": "+rows.fieldByName("q1");
 	
 	var timeToWrite = Ti.App.iOS.scheduleLocalNotification({
 		date:revokeTime,
@@ -87,13 +89,7 @@ if (Ti.version < 1.8 ) {
 					date:revokeTime}
 	});
 	
-	//TODO:Insert into database chat_history
-	//TODO:background service (what will happen when app is paused)
-	Ti.App.iOS.addEventListener('notification',function(data){
-		console.log(data.userInfo['date']);
-		console.log(data.userInfo['q1']);
-		console.log(data.userInfo['supervisor']);
-	});
+	
 	
 	/*var revokeTime = new Date();
 	
@@ -112,4 +108,21 @@ if (Ti.version < 1.8 ) {
 
 	var ApplicationTabGroup = require('ui/common/ApplicationTabGroup');
 	new ApplicationTabGroup(Window).open();
+	
+	//TODO:Insert into database chat_history
+	//TODO:background service (what will happen when app is paused)
+	Ti.App.iOS.addEventListener('notification',function(data){
+		var db = Ti.Database.open('diaryQA');
+		
+		console.log(data.userInfo['date']);
+		console.log(data.userInfo['q1']);
+		console.log(data.userInfo['supervisor']);
+		//Insert init question to databse
+		console.log('INSERT INTO chats (supervisor, date, q1) VALUES (?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toString(),data.userInfo['q1']);
+		db.execute('INSERT INTO chats (supervisor, date, q1) VALUES (?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toString(),data.userInfo['q1']);
+		db.close();
+	});
+	
 })();
+
+	
