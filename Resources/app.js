@@ -15,24 +15,7 @@ if (Ti.version < 1.8 ) {
 	alert('Sorry - this application template requires Titanium Mobile SDK 1.8 or later');
 }
 
-// This is a single context application with mutliple windows in a stack
-(function() {
-	
-	Ti.UI.iPhone.statusBarStyle = Ti.UI.iPhone.StatusBar.OPAQUE_BLACK;
-	
-	//determine platform and form factor and render approproate components
-	var osname = Ti.Platform.osname,
-		version = Ti.Platform.version,
-		height = Ti.Platform.displayCaps.platformHeight,
-		width = Ti.Platform.displayCaps.platformWidth;
-	
-	//considering tablet to have one dimension over 900px - this is imperfect, so you should feel free to decide
-	//yourself what you consider a tablet form factor for android
-	var isTablet = osname === 'ipad' || (osname === 'android' && (width > 899 || height > 899));
-	
-	var Window;
-	
-	var db = Ti.Database.open('diaryQA');
+var db = Ti.Database.open('diaryQA');
 	
 	if (Ti.App.Properties.getString('first_run') == null){
 		Ti.API.info("first time launch app!!");
@@ -72,7 +55,7 @@ if (Ti.version < 1.8 ) {
 	var revokeTime = new Date();
 	//revokeTime.setHours(parseInt(revokeTimeArray[0]));
 	//revokeTime.setMinutes(parseInt(revokeTimeArray[1]));
-	revokeTime.setMinutes(59);
+	revokeTime.setMinutes(42);
 	//revokeTime.setSeconds(0);
 	console.log(revokeTime.toDateString()+" "+revokeTime.toTimeString());
 	
@@ -98,19 +81,8 @@ if (Ti.version < 1.8 ) {
 	});*/
 	
 	db.close();
-	
-	if (isTablet) {
-		Window = require('ui/tablet/ApplicationWindow');
-	}
-	else {
-		Window = require('ui/handheld/ApplicationWindow');
-	}
 
-	var ApplicationTabGroup = require('ui/common/ApplicationTabGroup');
-	new ApplicationTabGroup(Window).open();
-	
-	//TODO:Insert into database chat_history
-	//TODO:background service (what will happen when app is paused)
+//TODO:background service (what will happen when app is paused)
 	Ti.App.iOS.addEventListener('notification',function(data){
 		var db = Ti.Database.open('diaryQA');
 		
@@ -122,6 +94,36 @@ if (Ti.version < 1.8 ) {
 		db.execute('INSERT INTO chats (supervisor, date, q1) VALUES (?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toString(),data.userInfo['q1']);
 		db.close();
 	});
+
+
+// This is a single context application with mutliple windows in a stack
+(function() {
+	
+	Ti.UI.iPhone.statusBarStyle = Ti.UI.iPhone.StatusBar.OPAQUE_BLACK;
+	
+	//determine platform and form factor and render approproate components
+	var osname = Ti.Platform.osname,
+		version = Ti.Platform.version,
+		height = Ti.Platform.displayCaps.platformHeight,
+		width = Ti.Platform.displayCaps.platformWidth;
+	
+	//considering tablet to have one dimension over 900px - this is imperfect, so you should feel free to decide
+	//yourself what you consider a tablet form factor for android
+	var isTablet = osname === 'ipad' || (osname === 'android' && (width > 899 || height > 899));
+	
+	var Window;
+	
+	if (isTablet) {
+		Window = require('ui/tablet/ApplicationWindow');
+	}
+	else {
+		Window = require('ui/handheld/ApplicationWindow');
+	}
+
+	var ApplicationTabGroup = require('ui/common/ApplicationTabGroup');
+	new ApplicationTabGroup(Window).open();
+	
+	
 	
 })();
 
