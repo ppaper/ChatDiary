@@ -1,10 +1,13 @@
+var roomData;
+
 function ChatRoom(data) {
 	
-	console.log("data is "+data);
-	var data = data;
+	console.log("id is "+data.id);
+	
+	roomData = data;
 	
 	var titleView = Ti.UI.createLabel({
-		text:data.title,
+		text:roomData.title,
 		color:'#fff',
 		font:{fontSize:20},
 		width:Ti.UI.SIZE,
@@ -71,7 +74,8 @@ function ChatRoom(data) {
 		color:'#333',
 		font:{fontSize:16},
 		height:Ti.UI.SIZE,
-		scrollable:false
+		scrollable:false,
+		returnKeyType:Ti.UI.RETURNKEY_SEND
 	});
 	
 	var sayRef = Ti.UI.createLabel({
@@ -97,8 +101,6 @@ function ChatRoom(data) {
 		talks.bottom = sayPanel.height;
 		console.log("saypanel height is "+sayPanel.height);
 	});
-	
-	
 	
 	sayPanel.add(sayRef);
 	sayPanel.add(say);
@@ -131,7 +133,7 @@ function ChatRoom(data) {
 		shadowColor:'#fff',
 		shadowOffset:{x:0,y:1},
 		font:{fontSize:18}
-	})
+	});
 	
 	supervisorPanel.add(labelSupervisor);
 	supervisorPanel.add(setupSupervisor);
@@ -165,9 +167,7 @@ function ChatRoom(data) {
 	
 	// assign chat history
 	talks_data.forEach(function(element,index,array){
-		row = Ti.UI.createTableViewRow({
-			
-		});
+		row = Ti.UI.createTableViewRow();
 		
 		//TopCap and LeftCap only work in TextField and button
 		
@@ -297,6 +297,17 @@ function ChatRoom(data) {
 				animated:Ti.UI.ANIMATION_CURVE_EASE_IN,
 				position:Ti.UI.iPhone.TableViewScrollPosition.BOTTOM
 			});
+			
+			var msgTime = new Date();
+			
+			//insert into database
+			//TODO:determine which type of msg is it, now still use 'a1'
+			var db = Ti.Database.open("diaryQA");
+			db.execute('INSERT INTO chats (supervisor, date, msg, type) VALUES (?,?,?,?)',roomData.id,msgTime.toString(),e.value,'a1');
+			//db.execute('');
+			console.log('MSG is sent and in the database! supervisor is '+roomData.id);
+			//alert("There is a new msg from "+supervisor.fieldByName('name')+"\nWho said \""+msgData.msg+"\"\nUnread:"+supervisor.fieldByName("unread"));
+			db.close();
 			
 			//clean typed in msg
 			say.value = '';

@@ -22,9 +22,9 @@ function SayWindow(title) {
 	});
 	
 	var chatrooms = [
-					{title:'David Chang'},
-					{title:'Agora Chen'},
-					{title:'Queen'}
+					{title:'David Chang',id:1},
+					{title:'Agora Chen',id:2},
+					{title:'Queen',id:3}
 					];
 	
 	var chatroomsData = [];
@@ -46,13 +46,15 @@ function SayWindow(title) {
 			touchEnabled:true,
 			selectedBackgroundColor:'#d2d2d2',
 			leftImage:'images/default_portrait.jpg',
-			title:data.title
+			title:data.title,
+			id:data.id
 		});
 		
 		
 		row.addEventListener('click',function(e){
 			//self.open
-			console.log("i is "+i);
+			
+			console.log("id is "+e.rowData.id);
 			var cr = new chatRoom(e.rowData);
 			self.containingTab.open(cr);
 			//self.open(cr);
