@@ -44,7 +44,7 @@ function SayWindow(title) {
 			className:'row',
 			objName:'row',
 			touchEnabled:true,
-			selectedBackgroundColor:'rgb(210,210,210)',
+			selectedBackgroundColor:'#d2d2d2',
 			leftImage:'images/default_portrait.jpg',
 			title:data.title
 		});

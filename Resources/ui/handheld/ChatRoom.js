@@ -27,7 +27,7 @@ function ChatRoom(data) {
 	var scrollView1 = Ti.UI.createScrollView({
 		contentHeight:'auto',
 		contentWidth:'auto'
-	})
+	});
 	
 	var wholeView = Ti.UI.createView({
 		top:0,
@@ -49,7 +49,7 @@ function ChatRoom(data) {
 	var sayPanel = Ti.UI.createView({
 		bottom:0,
 		height:44,
-		backgroundColor:'rgb(230,230,230)'
+		backgroundColor:'#e6e6e6'
 	});
 	
 	var buttonSend = Ti.UI.createButton({
