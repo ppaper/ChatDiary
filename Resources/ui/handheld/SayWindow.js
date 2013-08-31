@@ -64,6 +64,17 @@ function SayWindow(title) {
 	chatroomList.setData(chatroomsData);
 	
 	self.add(chatroomList);
+	
+	//Listening msg update event
+	Ti.App.addEventListener("msgGot",function(msgData){
+		//chatRoomList.statusUpdate()
+		var db = Ti.Database.open("diaryQA");
+		var supervisor = db.execute('SELECT * FROM friends WHERE id='+parseInt(msgData.supervisor));
+		//db.execute('');
+		alert("There is a new msg from "+supervisor.fieldByName('name')+"\nWho said \""+msgData.msg+"\"\nUnread:"+supervisor.fieldByName("unread"));
+		db.close();
+	});
+	
 	/*var button = Ti.UI.createButton({
 		height:44,
 		width:200,
