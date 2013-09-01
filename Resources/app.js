@@ -25,7 +25,7 @@ var db = Ti.Database.open('diaryQA');
 		//create database when the app launch (or open it if exist)
 		
 		//max. 8 questions TODO: make flexibile
-		db.execute('CREATE TABLE IF NOT EXISTS chats (id INTEGER PRIMARY KEY,supervisor, date, msg, type)');
+		db.execute('CREATE TABLE IF NOT EXISTS chats (id INTEGER PRIMARY KEY,supervisor, date, msg, msg_type)');
 		//config
 		db.execute('CREATE TABLE IF NOT EXISTS configs (id INTEGER PRIMARY KEY, alert_time,supervisor,q1,q2,q3,q4,q5,q6,q7,q8)');
 		//insert default settings (FROM SUN. 1 to SAT. 7)
@@ -96,15 +96,15 @@ var db = Ti.Database.open('diaryQA');
 		//Insert init question to databse
 		//console.log('INSERT INTO chats (supervisor, date, q1) VALUES (?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toString(),data.userInfo['q1']);
 		//get last q1 msg in database and check if today existed
-		var lastQ1row = db.execute('SELECT * FROM chats WHERE type=\'q1\' ORDER BY id DESC LIMIT 1');
+		var lastQ1row = db.execute('SELECT * FROM chats WHERE msg_type=\'q1\' ORDER BY id DESC LIMIT 1');
 		console.log("last q1 query has "+lastQ1row.rowCount+" result");
 		if (isNewDay(lastQ1row,data.userInfo['date'])){
 			console.log("It's new day thou!!");
-			db.execute('INSERT INTO chats (supervisor, date, msg, type) VALUES (?,?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toISOString(),data.userInfo['q1'],'q1');
+			db.execute('INSERT INTO chats (supervisor, date, msg, msg_type) VALUES (?,?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toISOString(),data.userInfo['q1'],'q1');
 			var supervisor = db.execute('SELECT unread,msgcount FROM friends WHERE id='+parseInt(data.userInfo['supervisor']));
 			console.log("unread:"+supervisor.fieldByName('unread')+" msg:"+supervisor.fieldByName('msgcount'));
 			db.execute('UPDATE friends SET unread=?,msgcount=?,update_time=? WHERE id=?',parseInt(supervisor.fieldByName('unread'))+1,parseInt(supervisor.fieldByName('msgcount'))+1,data.userInfo['date'].toISOString(),parseInt(data.userInfo['supervisor']));
-			Ti.App.fireEvent("msgGot",{supervisor:data.userInfo['supervisor'],date:data.userInfo['date'].toISOString(),msg:data.userInfo['q1'],type:'q1'});
+			Ti.App.fireEvent("msgGot",{supervisor:data.userInfo['supervisor'],date:data.userInfo['date'].toISOString(),msg:data.userInfo['q1'],msg_type:'q1'});
 		} else {
 			console.log("......OP");
 		}

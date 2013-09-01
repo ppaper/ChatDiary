@@ -1,5 +1,6 @@
 var roomData;
 
+//TODO:msgGot
 function ChatRoom(data) {
 	
 	console.log("id is "+data.id);
@@ -144,11 +145,16 @@ function ChatRoom(data) {
 	//console.log("h2:"+sayPanel.getHeight());
 	
 	//---- chat history -----
-	var talks_data = [{fromMe:false,content:"Hi there!"},{fromMe:false,content:"How's going, buddy?"},{fromMe:false,content:"I'm having a similar problem. I assumed the argument was a float to account for half pixels, but I'm not really sure. It's not clear to me that any adjustment to the caps is doing anything currently."}
+	
+	var db = Ti.Database.open('diaryQA');
+	var chatsRows = db.execute('SELECT * FROM chats WHERE supervisor='+roomData.id);
+	var talks_data = db2array(chatsRows);
+	/*var talks_data = [{fromMe:false,content:"Hi there!"},{fromMe:false,content:"How's going, buddy?"},{fromMe:false,content:"I'm having a similar problem. I assumed the argument was a float to account for half pixels, but I'm not really sure. It's not clear to me that any adjustment to the caps is doing anything currently."}
 	,{fromMe:true,content:"What did you eat today?"}
 	,{fromMe:false,content:"Hi there!"},{fromMe:false,content:"How's going, buddy?"},{fromMe:true,content:"I'm having a similar problem. I assumed the argument was a float to account for half pixels, but I'm not really sure. It's not clear to me that any adjustment to the caps is doing anything currently."}
 	,{fromMe:false,content:"What did you eat today?"}
-	];
+	];*/
+	db.close();
 	
 	var talks_rows = [];
 	
@@ -171,9 +177,9 @@ function ChatRoom(data) {
 		
 		//TopCap and LeftCap only work in TextField and button
 		
-		if (element.fromMe){
+		if (fromMe(element)){
 			//my msg
-			talk_bubble = assambleMyMsg(element.content);
+			talk_bubble = assambleMyMsg(element.msg);
 			/*talk_bubble = Ti.UI.createTextField({
 				width:242,
 				height:Ti.UI.SIZE,
@@ -204,7 +210,7 @@ function ChatRoom(data) {
 			});*/
 		}else{
 			//others msg
-			talk_bubble = assambleYourMsg(element.content);
+			talk_bubble = assambleYourMsg(element.msg);
 			/*talk_bubble = Ti.UI.createTextField({
 				width:242,
 				height:Ti.UI.SIZE,
@@ -247,7 +253,7 @@ function ChatRoom(data) {
 		
 		//talk_bubble.height = msg.rect.height + 12;
 		
-		talks_rows.unshift(row);
+		talks_rows.push(row);
 	});
 	
 	// first void element
@@ -303,7 +309,7 @@ function ChatRoom(data) {
 			//insert into database
 			//TODO:determine which type of msg is it, now still use 'a1'
 			var db = Ti.Database.open("diaryQA");
-			db.execute('INSERT INTO chats (supervisor, date, msg, type) VALUES (?,?,?,?)',roomData.id,msgTime.toISOString(),e.value,'a1');
+			db.execute('INSERT INTO chats (supervisor, date, msg, msg_type) VALUES (?,?,?,?)',roomData.id,msgTime.toISOString(),e.value,'a1');
 			//db.execute('');
 			console.log('MSG is sent and in the database! supervisor is '+roomData.id);
 			//alert("There is a new msg from "+supervisor.fieldByName('name')+"\nWho said \""+msgData.msg+"\"\nUnread:"+supervisor.fieldByName("unread"));
@@ -390,6 +396,49 @@ function assambleMyMsg(content){
 			});
 	talk_bubble.add(msg);
 	return talk_bubble;
+}
+
+function fromMe(chat_data){
+	console.log("okay go");
+	console.log(chat_data);
+	var pattern = /^q[0-9]$/g;
+	if (pattern.exec(chat_data.msg_type) == null){
+		return true;
+	} else {
+		return false;
+	}
+	/*if (chat_data.type.test(/^q[0-9]$/g)){
+		//it's question and from Robot
+		return false;
+	} else {
+		return true;
+	}*/
+}
+
+function db2array(rows){
+	var returnArray = [];
+	
+	var fieldCount;
+	//fieldCount is property in Android
+	if (Ti.Platform.name === 'android') {
+    	fieldCount = rows.fieldCount;
+	} else {
+    	fieldCount = rows.fieldCount();
+	}
+	
+	var obj = {};
+	
+	while (rows.isValidRow()){
+		obj = new Object();
+		for (var i=0;i<fieldCount;i++){
+			obj[rows.fieldName(i)] = rows.field(i);
+		}
+		console.log(obj);
+		returnArray.push(obj);
+		rows.next();
+	}
+	console.log(returnArray);
+	return returnArray;
 }
 
 module.exports = ChatRoom;
