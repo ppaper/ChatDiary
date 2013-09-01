@@ -303,7 +303,7 @@ function ChatRoom(data) {
 			//insert into database
 			//TODO:determine which type of msg is it, now still use 'a1'
 			var db = Ti.Database.open("diaryQA");
-			db.execute('INSERT INTO chats (supervisor, date, msg, type) VALUES (?,?,?,?)',roomData.id,msgTime.toString(),e.value,'a1');
+			db.execute('INSERT INTO chats (supervisor, date, msg, type) VALUES (?,?,?,?)',roomData.id,msgTime.toISOString(),e.value,'a1');
 			//db.execute('');
 			console.log('MSG is sent and in the database! supervisor is '+roomData.id);
 			//alert("There is a new msg from "+supervisor.fieldByName('name')+"\nWho said \""+msgData.msg+"\"\nUnread:"+supervisor.fieldByName("unread"));

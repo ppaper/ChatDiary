@@ -37,10 +37,10 @@ var db = Ti.Database.open('diaryQA');
 		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("23:33",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
 		db.execute('INSERT INTO configs (alert_time,supervisor,q1,q2,q3,q4,q5) VALUES ("22:30",1,"Hey man! How\'s going!?","What do you feel about the day?","What did you eat today?","Anything special?","Great day! See you tomorrow!")');
 		//friends
-		db.execute('CREATE TABLE IF NOT EXISTS friends (id INTEGER PRIMARY KEY,name,source,enabled,unread,msgcount)');
-		db.execute('INSERT INTO friends (id,name,source,enabled,unread,msgcount) VALUES (1,"David Chang","manule",1,0,0)');
-		db.execute('INSERT INTO friends (id,name,source,enabled,unread,msgcount) VALUES (2,"Agora Chen","manule",1,0,0)');
-		db.execute('INSERT INTO friends (id,name,source,enabled,unread,msgcount) VALUES (3,"Queen","manule",1,0,0)');
+		db.execute('CREATE TABLE IF NOT EXISTS friends (id INTEGER PRIMARY KEY,name,source,enabled,unread,msgcount,update_time,last_msg)');
+		db.execute('INSERT INTO friends (id,name,source,enabled,unread,msgcount,update_time) VALUES (1,"David Chang","manule",1,0,0,?)',new Date().toISOString());
+		db.execute('INSERT INTO friends (id,name,source,enabled,unread,msgcount,update_time) VALUES (2,"Agora Chen","manule",1,0,0,?)',new Date().toISOString());
+		db.execute('INSERT INTO friends (id,name,source,enabled,unread,msgcount,update_time) VALUES (3,"Queen","manule",1,0,0,?)',new Date().toISOString());
 		
 		
 		
@@ -100,11 +100,11 @@ var db = Ti.Database.open('diaryQA');
 		console.log("last q1 query has "+lastQ1row.rowCount+" result");
 		if (isNewDay(lastQ1row,data.userInfo['date'])){
 			console.log("It's new day thou!!");
-			db.execute('INSERT INTO chats (supervisor, date, msg, type) VALUES (?,?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toString(),data.userInfo['q1'],'q1');
+			db.execute('INSERT INTO chats (supervisor, date, msg, type) VALUES (?,?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toISOString(),data.userInfo['q1'],'q1');
 			var supervisor = db.execute('SELECT unread,msgcount FROM friends WHERE id='+parseInt(data.userInfo['supervisor']));
 			console.log("unread:"+supervisor.fieldByName('unread')+" msg:"+supervisor.fieldByName('msgcount'));
-			db.execute('UPDATE friends SET unread=?,msgcount=? WHERE id=?',parseInt(supervisor.fieldByName('unread'))+1,parseInt(supervisor.fieldByName('msgcount'))+1,parseInt(data.userInfo['supervisor']));
-			Ti.App.fireEvent("msgGot",{supervisor:data.userInfo['supervisor'],date:data.userInfo['date'].toString(),msg:data.userInfo['q1'],type:'q1'});
+			db.execute('UPDATE friends SET unread=?,msgcount=?,update_time=? WHERE id=?',parseInt(supervisor.fieldByName('unread'))+1,parseInt(supervisor.fieldByName('msgcount'))+1,data.userInfo['date'].toISOString(),parseInt(data.userInfo['supervisor']));
+			Ti.App.fireEvent("msgGot",{supervisor:data.userInfo['supervisor'],date:data.userInfo['date'].toISOString(),msg:data.userInfo['q1'],type:'q1'});
 		} else {
 			console.log("......OP");
 		}
