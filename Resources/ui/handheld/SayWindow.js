@@ -86,7 +86,7 @@ function SayWindow(title) {
 		var db = Ti.Database.open("diaryQA");
 		var supervisor = db.execute('SELECT * FROM friends WHERE id='+parseInt(msgData.supervisor));
 		//db.execute('');
-		alert("There is a new msg from "+supervisor.fieldByName('name')+"\nWho said \""+msgData.msg+"\"\nUnread:"+supervisor.fieldByName("unread"));
+		//alert("There is a new msg from "+supervisor.fieldByName('name')+"\nWho said \""+msgData.msg+"\"\nUnread:"+supervisor.fieldByName("unread"));
 		db.close();
 		updateList();
 	});

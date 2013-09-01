@@ -1,6 +1,8 @@
 var roomData;
+var talks;
+var talks_rows = [];
 
-//TODO:msgGot
+
 function ChatRoom(data) {
 	
 	console.log("id is "+data.id);
@@ -156,7 +158,7 @@ function ChatRoom(data) {
 	];*/
 	db.close();
 	
-	var talks_rows = [];
+	
 	
 	var talks = Ti.UI.createTableView({
 		top:0,
@@ -321,6 +323,27 @@ function ChatRoom(data) {
 		}
 	});
 	
+	//handling msgGot event when new msg comming
+	Ti.App.addEventListener('msgGot',function(msgData){
+		var db = Ti.Database.open('diaryQA');
+		var newComingMsg =  db.execute('SELECT * FROM chats WHERE id=? AND supervisor=?',parseInt(msgData.id),parseInt(roomData.id));
+		if (newComingMsg.isValidRow()){
+			//compose new coming msg and refresh list
+			var row = Ti.UI.createTableViewRow();
+			var talk_bubble = assambleYourMsg(newComingMsg.fieldByName('msg'));
+			row.add(talk_bubble);
+			talks_rows.push(row);
+			talks.appendRow(row,{
+				animated:true,
+				animationStyle:Ti.UI.iPhone.RowAnimationStyle.FADE,
+				position:Ti.UI.iPhone.TableViewScrollPosition.BOTTOM
+			});
+			talks.scrollToIndex(talks_rows.length-1,{
+				animated:Ti.UI.ANIMATION_CURVE_EASE_IN,
+				position:Ti.UI.iPhone.TableViewScrollPosition.BOTTOM
+			});
+		}
+	});
 	
 	wholeView.add(supervisorPanel);
 	

@@ -69,8 +69,8 @@ var db = Ti.Database.open('diaryQA');
 	var timeToWrite = Ti.App.iOS.scheduleLocalNotification({
 		date:revokeTime,
 		alertBody:msg,
-		repeat:'daily',
-		userInfo:{supervisor:rows.fieldByName('supervisor'),
+		userInfo:{
+			supervisor:rows.fieldByName('supervisor'),
 					q1:rows.fieldByName('q1'),
 					date:revokeTime}
 	});
@@ -101,10 +101,12 @@ var db = Ti.Database.open('diaryQA');
 		if (isNewDay(lastQ1row,data.userInfo['date'])){
 			console.log("It's new day thou!!");
 			db.execute('INSERT INTO chats (supervisor, date, msg, msg_type) VALUES (?,?,?,?)',data.userInfo['supervisor'],data.userInfo['date'].toISOString(),data.userInfo['q1'],'q1');
+			var msgId = db.execute('SELECT id FROM chats ORDER BY id DESC LIMIT 1');
 			var supervisor = db.execute('SELECT unread,msgcount FROM friends WHERE id='+parseInt(data.userInfo['supervisor']));
+			
 			console.log("unread:"+supervisor.fieldByName('unread')+" msg:"+supervisor.fieldByName('msgcount'));
 			db.execute('UPDATE friends SET unread=?,msgcount=?,update_time=? WHERE id=?',parseInt(supervisor.fieldByName('unread'))+1,parseInt(supervisor.fieldByName('msgcount'))+1,data.userInfo['date'].toISOString(),parseInt(data.userInfo['supervisor']));
-			Ti.App.fireEvent("msgGot",{supervisor:data.userInfo['supervisor'],date:data.userInfo['date'].toISOString(),msg:data.userInfo['q1'],msg_type:'q1'});
+			Ti.App.fireEvent("msgGot",{id:msgId.fieldByName('id'),supervisor:data.userInfo['supervisor'],date:data.userInfo['date'].toISOString(),msg:data.userInfo['q1'],msg_type:'q1'});
 		} else {
 			console.log("......OP");
 		}
