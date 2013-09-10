@@ -182,78 +182,14 @@ function ChatRoom(data) {
 		if (fromMe(element)){
 			//my msg
 			talk_bubble = assambleMyMsg(element.msg);
-			/*talk_bubble = Ti.UI.createTextField({
-				width:242,
-				height:Ti.UI.SIZE,
-				backgroundImage:'images/talk_bubble_me@2x.png',
-				backgroundLeftCap:30,
-				backgroundTopCap:40,
-				backgroundColor:'transparent',
-				top:6,
-				bottom:6,
-				paddingLeft:6,
-				paddingRight:26,
-				editable:false
-			});
-			
-			msg = Ti.UI.createTextArea({
-				width:210,
-				height:'auto',
-				value:element.content,
-				font:{fontSize:14},
-				color:'#666666',
-				backgroundColor:'transparent',
-				top:6,
-				bottom:6,
-				left:6,
-				right:20,
-				verticalAlign:Ti.UI.TEXT_VERTICAL_ALIGNMENT_TOP,
-				editable:false
-			});*/
 		}else{
 			//others msg
 			talk_bubble = assambleYourMsg(element.msg);
-			/*talk_bubble = Ti.UI.createTextField({
-				width:242,
-				height:Ti.UI.SIZE,
-				backgroundImage:'images/talk_bubble@2x.png',
-				backgroundLeftCap:30,
-				backgroundTopCap:40,
-				backgroundColor:'transparent',
-				top:6,
-				bottom:6,
-				paddingLeft:26,
-				paddingRight:6,
-				editable:false
-			});
-			
-			msg = Ti.UI.createTextArea({
-				width:210,
-				height:'auto',
-				value:element.content,
-				font:{fontSize:14},
-				color:'#666666',
-				backgroundColor:'transparent',
-				top:6,
-				bottom:6,
-				left:20,
-				right:6,
-				verticalAlign:Ti.UI.TEXT_VERTICAL_ALIGNMENT_TOP,
-				editable:false
-			});*/
 		}
 		
-		/*if (msg.rect.height < MSG_MINI_HEIGHT){
-			msg.height = MSG_MINI_HEIGHT;
-		}*/
-		
-		//talk_bubble.add(msg);
 		
 		row.add(talk_bubble);
 		
-		//console.log("h is "+msg.height);
-		
-		//talk_bubble.height = msg.rect.height + 12;
 		
 		talks_rows.push(row);
 	});
@@ -311,6 +247,16 @@ function ChatRoom(data) {
 			//insert into database
 			//TODO:determine which type of msg is it, now still use 'a1'
 			var db = Ti.Database.open("diaryQA");
+			
+			//determine which type of msg it is
+			var lastQ = db.execute('SELECT * FROM chats WHERE supervisor='+roomData.id+' AND msg_type LIKE \'q_\' ORDER BY id DESC LIMIT 1');
+			Ti.API.info("how many lastQ: "+lastQ.rowCount);
+			Ti.API.info("what is lastQ: "+lastQ.fieldByName('msg'));
+			Ti.API.info("which type is lastQ: "+lastQ.fieldByName('msg_type'));
+			Ti.API.info("which id is lastQ: "+lastQ.fieldByName('id'));
+			Ti.API.info("which date is lastQ: "+lastQ.fieldByName('date'));
+			Ti.API.info("which supervisor is lastQ: "+lastQ.fieldByName('supervisor'));
+			
 			db.execute('INSERT INTO chats (supervisor, date, msg, msg_type) VALUES (?,?,?,?)',roomData.id,msgTime.toISOString(),e.value,'a1');
 			//db.execute('');
 			console.log('MSG is sent and in the database! supervisor is '+roomData.id);
