@@ -114,6 +114,11 @@ var db = Ti.Database.open('diaryQA');
 		db.close();
 	});
 
+	Ti.App.addEventListener("msgSent",function(){
+		//Receive msg
+		//TODO:Do ssomething when receive response
+		Ti.API.info("MSG SENT!!");
+	});
 
 function isNewDay(lastQ1,msgDate){
 	console.log(lastQ1.rowCount);

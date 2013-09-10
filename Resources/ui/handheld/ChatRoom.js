@@ -257,9 +257,15 @@ function ChatRoom(data) {
 			Ti.API.info("which date is lastQ: "+lastQ.fieldByName('date'));
 			Ti.API.info("which supervisor is lastQ: "+lastQ.fieldByName('supervisor'));
 			
-			db.execute('INSERT INTO chats (supervisor, date, msg, msg_type) VALUES (?,?,?,?)',roomData.id,msgTime.toISOString(),e.value,'a1');
+			var msg_type = "a"+parseInt(lastQ.fieldByName('msg_type').slice(1));
+			Ti.API.info("the sending type is "+msg_type);
+			
+			db.execute('INSERT INTO chats (supervisor, date, msg, msg_type) VALUES (?,?,?,?)',roomData.id,msgTime.toISOString(),e.value,msg_type);
 			//db.execute('');
+			var sentMsgId = db.execute('SELECT id FROM chats ORDER BY id DESC LIMIT 1');
+			
 			console.log('MSG is sent and in the database! supervisor is '+roomData.id);
+			Ti.App.fireEvent("msgSent",{id:sentMsgId.fieldByName('id'),supervisor:roomData.id,date:msgTime.toISOString(),msg:e.value,msg_type:msg_type});
 			//alert("There is a new msg from "+supervisor.fieldByName('name')+"\nWho said \""+msgData.msg+"\"\nUnread:"+supervisor.fieldByName("unread"));
 			db.close();
 			
