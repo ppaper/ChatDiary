@@ -105,6 +105,14 @@ function ChatRoom(data) {
 		console.log("saypanel height is "+sayPanel.height);
 	});
 	
+	say.addEventListener('focus',function(e){
+		Ti.App.fireEvent('isWriting',{supervisor:roomData.id});
+	});
+	
+	say.addEventListener('blur',function(e){
+		Ti.App.fireEvent('isNotWriting',{supervisor:roomData.id});
+	});
+	
 	sayPanel.add(sayRef);
 	sayPanel.add(say);
 	sayPanel.add(buttonSend);
@@ -248,6 +256,7 @@ function ChatRoom(data) {
 			//TODO:determine which type of msg is it, now still use 'a1'
 			var db = Ti.Database.open("diaryQA");
 			
+			//TODO: check complex situation. now only check the last question. ex. q4 -> a4
 			//determine which type of msg it is
 			var lastQ = db.execute('SELECT * FROM chats WHERE supervisor='+roomData.id+' AND msg_type LIKE \'q_\' ORDER BY id DESC LIMIT 1');
 			Ti.API.info("how many lastQ: "+lastQ.rowCount);
