@@ -1,7 +1,12 @@
 var roomData;
 var talks;
 var talks_rows = [];
+var send_sound = Ti.Media.createSound({url:"sounds/drum2.m4a"});
+var send_sound2 = Ti.Media.createSound({url:"sounds/drum2.m4a"});
+//send_sound.volume = 0.5;
+//send_sound2.volume = 0.5;
 
+var odd = true;
 
 function ChatRoom(data) {
 	
@@ -249,6 +254,16 @@ function ChatRoom(data) {
 				animated:Ti.UI.ANIMATION_CURVE_EASE_IN,
 				position:Ti.UI.iPhone.TableViewScrollPosition.BOTTOM
 			});
+			
+			//the sound effect
+			if (odd){
+				send_sound.play();
+				odd = false;
+			} else {
+				send_sound2.play();
+				odd = true;
+			}
+			
 			
 			var msgTime = new Date();
 			
