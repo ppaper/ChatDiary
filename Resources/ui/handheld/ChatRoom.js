@@ -340,6 +340,7 @@ function assambleYourMsg(content){
 				backgroundColor:'transparent',
 				top:6,
 				bottom:6,
+				left:20,
 				paddingLeft:26,
 				paddingRight:6,
 				editable:false
@@ -367,6 +368,7 @@ function assambleYourMsg(content){
 function assambleMyMsg(content){
 	var talk_bubble = Ti.UI.createTextField({
 				width:242,
+				right:10,
 				height:Ti.UI.SIZE,
 				backgroundImage:'images/talk_bubble_me@2x.png',
 				backgroundLeftCap:30,
