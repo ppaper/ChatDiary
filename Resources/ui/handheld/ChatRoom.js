@@ -69,7 +69,13 @@ function ChatRoom(data) {
 		height:30,
 		right:10,
 		width:44,
-		botton:7
+		botton:7,
+		enabled:false
+	});
+	
+	buttonSend.addEventListener("click",function(){
+		say.fireEvent("return");
+		say.blur();
 	});
 	
 	var say = Ti.UI.createTextArea({
@@ -108,6 +114,14 @@ function ChatRoom(data) {
 		sayPanel.height = sayRef.size.height+24;
 		talks.bottom = sayPanel.height;
 		console.log("saypanel height is "+sayPanel.height);
+		
+		//enable/disable send button
+		if (say.value != "" && say.value.length != 0){
+			//enable send button
+			buttonSend.enabled = true;
+		} else {
+			buttonSend.enabled = false;
+		}
 	});
 	
 	say.addEventListener('focus',function(e){
@@ -236,12 +250,12 @@ function ChatRoom(data) {
 	
 	//send out msg
 	say.addEventListener('return',function(e){
-		console.log(e.source+"::"+e.type+"::"+e.value);
-		if (e.value != ""||e.value != undefined){
+		//console.log(e.source+"::"+e.type+"::"+e.value);
+		if (say.value != ""||say.value != undefined){
 			//assamble msg
-			talks_data.unshift({fromMe:true, content:e.value});
+			talks_data.unshift({fromMe:true, content:say.value});
 			//append chat row
-			var talk_bubble = assambleMyMsg(e.value);
+			var talk_bubble = assambleMyMsg(say.value);
 			var row = Ti.UI.createTableViewRow();
 			row.add(talk_bubble);
 			talks_rows.unshift(row);
@@ -284,18 +298,21 @@ function ChatRoom(data) {
 			var msg_type = "a"+parseInt(lastQ.fieldByName('msg_type').slice(1));
 			Ti.API.info("the sending type is "+msg_type);
 			
-			db.execute('INSERT INTO chats (supervisor, date, msg, msg_type) VALUES (?,?,?,?)',roomData.id,msgTime.toISOString(),e.value,msg_type);
+			db.execute('INSERT INTO chats (supervisor, date, msg, msg_type) VALUES (?,?,?,?)',roomData.id,msgTime.toISOString(),say.value,msg_type);
 			//db.execute('');
 			var sentMsgId = db.execute('SELECT id FROM chats ORDER BY id DESC LIMIT 1');
 			
 			console.log('MSG is sent and in the database! supervisor is '+roomData.id);
-			Ti.App.fireEvent("msgSent",{id:sentMsgId.fieldByName('id'),supervisor:roomData.id,date:msgTime.toISOString(),msg:e.value,msg_type:msg_type});
+			Ti.App.fireEvent("msgSent",{id:sentMsgId.fieldByName('id'),supervisor:roomData.id,date:msgTime.toISOString(),msg:say.value,msg_type:msg_type});
 			//alert("There is a new msg from "+supervisor.fieldByName('name')+"\nWho said \""+msgData.msg+"\"\nUnread:"+supervisor.fieldByName("unread"));
 			db.close();
 			
 			//clean typed in msg
 			say.value = '';
 			sayRef.text = '';
+			
+			//disable send button
+			buttonSend.enabled = false;
 		}
 	});
 	
