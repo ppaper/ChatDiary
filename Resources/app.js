@@ -53,7 +53,7 @@ var rows = db.execute('SELECT * FROM configs WHERE id=' + (today.getDay() + 1));
 Ti.API.info("Today is " + today.getDay() + ". Result has " + rows.rowCount + " rows. Revoke time is " + rows.fieldByName("alert_time") + ". Id is " + rows.fieldByName("id"));
 var revokeTimeArray = rows.fieldByName("alert_time").split(":");
 //TODO:remove debug mode
-var revokeTime = new Date(new Date().getTime() + 30000);
+var revokeTime = new Date(new Date().getTime() + 15000);
 //revokeTime.setHours(parseInt(revokeTimeArray[0]));
 //revokeTime.setMinutes(parseInt(revokeTimeArray[1]));
 //revokeTime.setMinutes(42);
@@ -67,6 +67,7 @@ var msg = supervisor.fieldByName("name") + ": " + rows.fieldByName("q1");
 var timeToWrite = Ti.App.iOS.scheduleLocalNotification({
 	date : revokeTime,
 	alertBody : msg,
+	sound:"sounds/swordsmall.m4a",
 	userInfo : {
 		supervisor : rows.fieldByName('supervisor'),
 		msg : rows.fieldByName('q1'),

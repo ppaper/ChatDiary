@@ -1,8 +1,8 @@
 var roomData;
 var talks;
 var talks_rows = [];
-var send_sound = Ti.Media.createSound({url:"sounds/drum2.m4a"});
-var send_sound2 = Ti.Media.createSound({url:"sounds/drum2.m4a"});
+var send_sound = Ti.Media.createSound({url:"sounds/woosh.m4a"});
+var send_sound2 = Ti.Media.createSound({url:"sounds/woosh.m4a"});
 //send_sound.volume = 0.5;
 //send_sound2.volume = 0.5;
 
